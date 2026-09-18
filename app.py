@@ -22,92 +22,84 @@ st.set_page_config(
 
 
 # =========================================================
-# CUSTOM CSS - APP STYLE
+# CUSTOM CSS
 # =========================================================
 
 st.markdown("""
 <style>
 
-    /* Main background */
-    .stApp {
-        background-color: #f7f7f8;
-    }
+.stApp {
+    background-color: #f7f7f8;
+}
 
-    /* Hide default Streamlit menu/footer */
-    #MainMenu {
-        visibility: hidden;
-    }
+#MainMenu {
+    visibility: hidden;
+}
 
-    footer {
-        visibility: hidden;
-    }
+footer {
+    visibility: hidden;
+}
 
-    header {
-        visibility: hidden;
-    }
+header {
+    visibility: hidden;
+}
 
-    /* Entrance AI logo */
-    .ai-logo {
-        width: 120px;
-        height: 120px;
-        margin: 80px auto 25px auto;
-        border-radius: 50%;
-        background: linear-gradient(
-            135deg,
-            #10a37f,
-            #19c37d
-        );
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 60px;
-        box-shadow:
-            0px 10px 35px rgba(0,0,0,0.18);
-    }
+.ai-logo {
+    width: 120px;
+    height: 120px;
+    margin: 80px auto 25px auto;
+    border-radius: 50%;
+    background: linear-gradient(
+        135deg,
+        #10a37f,
+        #19c37d
+    );
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 60px;
+    box-shadow:
+        0px 10px 35px rgba(0,0,0,0.18);
+}
 
-    /* Entrance title */
-    .entrance-title {
-        text-align: center;
-        font-size: 42px;
-        font-weight: 700;
-        margin-bottom: 10px;
-    }
+.entrance-title {
+    text-align: center;
+    font-size: 42px;
+    font-weight: 700;
+    margin-bottom: 10px;
+}
 
-    /* Entrance subtitle */
-    .entrance-subtitle {
-        text-align: center;
-        font-size: 18px;
-        color: #666666;
-        margin-bottom: 35px;
-    }
+.entrance-subtitle {
+    text-align: center;
+    font-size: 18px;
+    color: #666666;
+    margin-bottom: 35px;
+}
 
-    /* Question card */
-    .question-card {
-        background: white;
-        padding: 25px;
-        border-radius: 18px;
-        border: 1px solid #e5e5e5;
-        margin-top: 15px;
-        margin-bottom: 20px;
-        box-shadow:
-            0px 3px 12px rgba(0,0,0,0.05);
-    }
+.question-card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #e5e5e5;
+    margin-top: 15px;
+    margin-bottom: 20px;
+    box-shadow:
+        0px 3px 12px rgba(0,0,0,0.05);
+}
 
-    /* App cards */
-    .app-card {
-        background: white;
-        padding: 25px;
-        border-radius: 18px;
-        border: 1px solid #e5e5e5;
-        box-shadow:
-            0px 3px 12px rgba(0,0,0,0.05);
-    }
+.app-card {
+    background: white;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #e5e5e5;
+    box-shadow:
+        0px 3px 12px rgba(0,0,0,0.05);
+}
 
-    /* Sidebar */
-    section[data-testid="stSidebar"] {
-        background-color: #ffffff;
-        border-right: 1px solid #e5e5e5;
-    }
+section[data-testid="stSidebar"] {
+    background-color: #ffffff;
+    border-right: 1px solid #e5e5e5;
+}
 
 </style>
 """, unsafe_allow_html=True)
@@ -133,6 +125,9 @@ defaults = {
     "answers": {},
     "results": {},
     "voice_results": {},
+
+    # NEW: Store recorded audio
+    "audio_results": {},
 
     "total_score": 0,
     "correct_answers": 0
@@ -180,6 +175,9 @@ def reset_interview():
 
     st.session_state.voice_results = {}
 
+    # NEW
+    st.session_state.audio_results = {}
+
     st.session_state.total_score = 0
 
     st.session_state.correct_answers = 0
@@ -222,27 +220,33 @@ if st.session_state.page != "welcome":
 
         st.markdown("---")
 
+
         # Candidate Details
+
         if st.button(
             "👤  Candidate Details",
             use_container_width=True
         ):
 
             st.session_state.page = "details"
+
             st.rerun()
 
 
         # Interview Role
+
         if st.button(
             "💼  Interview Role",
             use_container_width=True
         ):
 
             st.session_state.page = "role"
+
             st.rerun()
 
 
         # Interview
+
         if st.button(
             "🎤  Interview",
             use_container_width=True
@@ -264,6 +268,7 @@ if st.session_state.page != "welcome":
 
 
         # Final Report
+
         if st.button(
             "🏆  Final Report",
             use_container_width=True
@@ -278,14 +283,17 @@ if st.session_state.page != "welcome":
             else:
 
                 st.session_state.page = "report"
+
                 st.rerun()
 
 
         st.markdown("---")
 
 
-        # Candidate status
-        st.caption("CURRENT CANDIDATE")
+        st.caption(
+            "CURRENT CANDIDATE"
+        )
+
 
         if st.session_state.name:
 
@@ -300,8 +308,10 @@ if st.session_state.page != "welcome":
             )
 
 
-        # Role status
-        st.caption("INTERVIEW ROLE")
+        st.caption(
+            "INTERVIEW ROLE"
+        )
+
 
         if st.session_state.role:
 
@@ -322,7 +332,6 @@ if st.session_state.page != "welcome":
 
 if st.session_state.page == "welcome":
 
-    # Center layout
     left, center, right = st.columns(
         [1, 2, 1]
     )
@@ -354,6 +363,7 @@ if st.session_state.page == "welcome":
 
         st.write("")
 
+
         if st.button(
             "🚀 Start Interview",
             use_container_width=True
@@ -370,7 +380,9 @@ if st.session_state.page == "welcome":
 
 elif st.session_state.page == "details":
 
-    st.title("👤 Candidate Details")
+    st.title(
+        "👤 Candidate Details"
+    )
 
     st.caption(
         "Tell us a little about yourself before the interview."
@@ -445,7 +457,9 @@ elif st.session_state.page == "details":
 
 elif st.session_state.page == "role":
 
-    st.title("💼 Interview Role")
+    st.title(
+        "💼 Interview Role"
+    )
 
     st.caption(
         "Choose the role you want to practice for."
@@ -460,12 +474,14 @@ elif st.session_state.page == "role":
             "Please complete Candidate Details first."
         )
 
+
         if st.button(
             "Go to Candidate Details",
             use_container_width=True
         ):
 
             st.session_state.page = "details"
+
             st.rerun()
 
     else:
@@ -504,16 +520,17 @@ elif st.session_state.page == "role":
 
 elif st.session_state.page == "interview":
 
-    # Safety checks
     if not st.session_state.name:
 
         st.session_state.page = "details"
+
         st.rerun()
 
 
     elif not st.session_state.role:
 
         st.session_state.page = "role"
+
         st.rerun()
 
 
@@ -521,9 +538,11 @@ elif st.session_state.page == "interview":
 
         role = st.session_state.role
 
+
         level = levels[
             st.session_state.level_index
         ]
+
 
         questions = QUESTIONS[
             role
@@ -531,13 +550,16 @@ elif st.session_state.page == "interview":
             level
         ]
 
+
         question_index = (
             st.session_state.question_index
         )
 
+
         question_data = questions[
             question_index
         ]
+
 
         question_id = get_question_id()
 
@@ -553,7 +575,10 @@ elif st.session_state.page == "interview":
         # HEADER
         # -------------------------------------------------
 
-        st.title("🎤 Interview")
+        st.title(
+            "🎤 Interview"
+        )
+
 
         col1, col2, col3 = st.columns(3)
 
@@ -600,8 +625,15 @@ elif st.session_state.page == "interview":
         st.markdown(
             f"""
             <div class="question-card">
-                <small>QUESTION {question_number}</small>
-                <h2>{question_data['question']}</h2>
+
+                <small>
+                    QUESTION {question_number}
+                </small>
+
+                <h2>
+                    {question_data['question']}
+                </h2>
+
             </div>
             """,
             unsafe_allow_html=True
@@ -615,7 +647,7 @@ elif st.session_state.page == "interview":
 
 
         # =================================================
-        # ANSWER
+        # ANSWER INPUT
         # =================================================
 
         if not already_answered:
@@ -643,6 +675,7 @@ elif st.session_state.page == "interview":
             st.subheader(
                 "🎙️ Voice Answer"
             )
+
 
             st.caption(
                 "You can answer by speaking instead of typing."
@@ -676,16 +709,30 @@ elif st.session_state.page == "interview":
 
                     try:
 
+                        # Save audio bytes in session
+                        audio_bytes = (
+                            audio_file.getvalue()
+                        )
+
+
+                        st.session_state.audio_results[
+                            question_id
+                        ] = audio_bytes
+
+
+                        # Temporary file for processing
                         with tempfile.NamedTemporaryFile(
                             delete=False,
                             suffix=".wav"
                         ) as temp:
 
                             temp.write(
-                                audio_file.getbuffer()
+                                audio_bytes
                             )
 
-                            temporary_audio = temp.name
+                            temporary_audio = (
+                                temp.name
+                            )
 
 
                         st.info(
@@ -693,13 +740,19 @@ elif st.session_state.page == "interview":
                         )
 
 
-                        voice_text = transcribe_audio(
-                            temporary_audio
+                        # Whisper transcription
+                        voice_text = (
+                            transcribe_audio(
+                                temporary_audio
+                            )
                         )
 
 
-                        voice_features = analyze_voice(
-                            temporary_audio
+                        # Librosa analysis
+                        voice_features = (
+                            analyze_voice(
+                                temporary_audio
+                            )
                         )
 
 
@@ -708,14 +761,19 @@ elif st.session_state.page == "interview":
                         ] = voice_features
 
 
+                        # If no typed answer,
+                        # use voice transcription
                         if not final_answer:
 
-                            final_answer = voice_text
+                            final_answer = (
+                                voice_text
+                            )
 
 
                             st.subheader(
                                 "🗣️ Transcription"
                             )
+
 
                             st.info(
                                 voice_text
@@ -781,9 +839,14 @@ elif st.session_state.page == "interview":
                     )
 
 
-                    st.session_state.total_score = total
+                    st.session_state.total_score = (
+                        total
+                    )
 
-                    st.session_state.correct_answers = correct
+
+                    st.session_state.correct_answers = (
+                        correct
+                    )
 
 
                     st.rerun()
@@ -809,21 +872,54 @@ elif st.session_state.page == "interview":
             )
 
 
+            # -------------------------------------------------
+            # SAVED ANSWER
+            # -------------------------------------------------
+
             st.subheader(
                 "📝 Your Answer"
             )
+
 
             st.info(
                 saved_answer
             )
 
 
+            # -------------------------------------------------
+            # AUDIO PLAYBACK
+            # -------------------------------------------------
+
+            if (
+                question_id
+                in st.session_state.audio_results
+            ):
+
+                st.subheader(
+                    "🎧 Your Recorded Answer"
+                )
+
+
+                st.audio(
+                    st.session_state.audio_results[
+                        question_id
+                    ],
+                    format="audio/wav"
+                )
+
+
+            # -------------------------------------------------
+            # EVALUATION
+            # -------------------------------------------------
+
             st.subheader(
                 "📊 Evaluation"
             )
 
 
-            score = result["score"]
+            score = result[
+                "score"
+            ]
 
 
             if score >= 8:
@@ -850,20 +946,30 @@ elif st.session_state.page == "interview":
             )
 
 
+            # -------------------------------------------------
+            # EXPECTED ANSWER
+            # -------------------------------------------------
+
             st.subheader(
                 "✅ Expected Answer"
             )
+
 
             st.info(
                 result["correct_answer"]
             )
 
 
+            # -------------------------------------------------
+            # CONCEPTS
+            # -------------------------------------------------
+
             if result["matched"]:
 
                 st.subheader(
                     "🔑 Concepts Detected"
                 )
+
 
                 st.write(
                     ", ".join(
@@ -872,11 +978,17 @@ elif st.session_state.page == "interview":
                 )
 
 
-            # -----------------------------------------
-            # VOICE ANALYSIS
-            # -----------------------------------------
+            # -------------------------------------------------
+            # VOICE TRANSCRIPTION
+            # -------------------------------------------------
 
-            if question_id in st.session_state.voice_results:
+            if (
+                question_id
+                in st.session_state.voice_results
+            ):
+
+                # We don't store transcription separately,
+                # so playback + analysis are shown here.
 
                 st.subheader(
                     "🎙️ Voice Analysis"
@@ -905,7 +1017,9 @@ elif st.session_state.page == "interview":
 
                     st.metric(
                         "Average Volume",
-                        features["average_volume"]
+                        features[
+                            "average_volume"
+                        ]
                     )
 
 
@@ -913,7 +1027,9 @@ elif st.session_state.page == "interview":
 
                     st.metric(
                         "Voice Activity",
-                        features["zero_crossing_rate"]
+                        features[
+                            "zero_crossing_rate"
+                        ]
                     )
 
 
@@ -932,12 +1048,16 @@ elif st.session_state.page == "interview":
         col1, col2 = st.columns(2)
 
 
-        # Previous
+        # -------------------------------------------------
+        # PREVIOUS
+        # -------------------------------------------------
+
         with col1:
 
             if (
                 st.session_state.level_index > 0
-                or st.session_state.question_index > 0
+                or
+                st.session_state.question_index > 0
             ):
 
                 if st.button(
@@ -945,7 +1065,10 @@ elif st.session_state.page == "interview":
                     use_container_width=True
                 ):
 
-                    if st.session_state.question_index > 0:
+                    if (
+                        st.session_state.question_index
+                        > 0
+                    ):
 
                         st.session_state.question_index -= 1
 
@@ -955,13 +1078,20 @@ elif st.session_state.page == "interview":
 
                         st.session_state.question_index = 4
 
+
                     st.rerun()
 
 
-        # Next
+        # -------------------------------------------------
+        # NEXT
+        # -------------------------------------------------
+
         with col2:
 
-            if st.session_state.question_index < 4:
+            if (
+                st.session_state.question_index
+                < 4
+            ):
 
                 if st.button(
                     "Next →",
@@ -973,11 +1103,15 @@ elif st.session_state.page == "interview":
                     st.rerun()
 
 
-            elif st.session_state.level_index < 2:
+            elif (
+                st.session_state.level_index
+                < 2
+            ):
 
                 next_level = levels[
                     st.session_state.level_index + 1
                 ]
+
 
                 if st.button(
                     f"Continue to {next_level} →",
@@ -1009,7 +1143,10 @@ elif st.session_state.page == "interview":
 
 elif st.session_state.page == "report":
 
-    st.title("🏆 Interview Report")
+    st.title(
+        "🏆 Interview Report"
+    )
+
 
     total_score, correct_answers = (
         calculate_final_score()
@@ -1022,8 +1159,10 @@ elif st.session_state.page == "report":
     percentage = round(
         (
             total_score
-            / maximum_score
-        ) * 100
+            /
+            maximum_score
+        )
+        * 100
     )
 
 
@@ -1052,22 +1191,28 @@ elif st.session_state.page == "report":
     with col1:
 
         st.write(
-            f"**Name:** {st.session_state.name}"
+            f"**Name:** "
+            f"{st.session_state.name}"
         )
 
+
         st.write(
-            f"**Mobile:** {st.session_state.phone}"
+            f"**Mobile:** "
+            f"{st.session_state.phone}"
         )
 
 
     with col2:
 
         st.write(
-            f"**Email:** {st.session_state.email}"
+            f"**Email:** "
+            f"{st.session_state.email}"
         )
 
+
         st.write(
-            f"**Role:** {st.session_state.role}"
+            f"**Role:** "
+            f"{st.session_state.role}"
         )
 
 
@@ -1127,25 +1272,30 @@ elif st.session_state.page == "report":
     if percentage >= 80:
 
         st.success(
-            "Excellent performance. Your technical concepts are well developed."
+            "Excellent performance. "
+            "Your technical concepts are well developed."
         )
 
     elif percentage >= 60:
 
         st.info(
-            "Good performance. Continue improving your technical explanations."
+            "Good performance. "
+            "Continue improving your technical explanations."
         )
 
     elif percentage >= 40:
 
         st.warning(
-            "You have a foundation. Practice the concepts and explain answers in more detail."
+            "You have a foundation. "
+            "Practice the concepts and explain answers "
+            "in more detail."
         )
 
     else:
 
         st.error(
-            "More preparation is recommended. Review the fundamentals and practice again."
+            "More preparation is recommended. "
+            "Review the fundamentals and practice again."
         )
 
 

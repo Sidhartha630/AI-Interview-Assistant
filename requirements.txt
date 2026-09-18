@@ -1,0 +1,9 @@
+streamlit
+openai
+python-dotenv
+SpeechRecognition
+librosa
+soundfile
+sounddevice
+scipy
+openai-whisper
